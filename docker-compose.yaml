@@ -1,0 +1,31 @@
+version: "3.7"
+
+services:
+
+  prometheus:
+    image: prom/prometheus:v2.24.0
+    volumes:
+    - ./prometheus.yaml:/etc/prometheus/config.yaml
+    command:
+    - --config.file=/etc/prometheus/config.yaml
+    ports:
+    - 9090:9090
+
+  grafana:
+    image: grafana/grafana:7.3.6
+    volumes:
+    - ./grafana/config.ini:/etc/grafana/grafana.ini
+    - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+    - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+    - ./grafana/dashboard-icmp.json:/etc/grafana/provisioning/dashboards/dashboard-icmp.json
+    ports:
+    - 9091:8080
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter
+    volumes:
+    - ./blackbox.yaml:/config/blackbox.yaml
+    command: --config.file=/config/blackbox.yaml
+    ports:
+    - 9115:9115
+
